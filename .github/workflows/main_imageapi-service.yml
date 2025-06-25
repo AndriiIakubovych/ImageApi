@@ -26,6 +26,14 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release
 
+      - name: Set environment variables for EF Core migrations
+        run: |
+          echo "ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
+          echo "AzureBlobStorage__StorageConnection=${{ secrets.AZURE_BLOB_CONNECTION_STRING }}" >> $GITHUB_ENV
+
+      - name: Run EF Core migrations
+        run: dotnet ef database update --project ImageApi/ImageApi.csproj
+
       - name: Run tests
         run: dotnet test ImageApi.Tests/ImageApi.Tests.csproj --configuration Release --no-build --verbosity normal
 
@@ -38,29 +46,9 @@ jobs:
           name: .net-app
           path: ${{ github.workspace }}/myapp
 
-  migrate:
-    runs-on: windows-latest
-    needs: build
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0'
-
-      - name: Install EF Core CLI
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Apply EF Core migrations
-        run: dotnet ef database update --project ImageApi/ImageApi.csproj
-
   deploy:
     runs-on: windows-latest
-    needs: migrate
+    needs: build
     permissions:
       id-token: write
       contents: read
