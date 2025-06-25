@@ -26,6 +26,12 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release
 
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add dotnet tools to PATH
+        run: echo "$env:USERPROFILE\.dotnet\tools" | Out-File -Append -FilePath $env:GITHUB_PATH
+
       - name: Set environment variables for EF Core migrations
         run: |
           echo "ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
