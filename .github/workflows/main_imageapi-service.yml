@@ -30,7 +30,7 @@ jobs:
         run: dotnet test ImageApi.Tests/ImageApi.Tests.csproj --configuration Release --no-build --verbosity normal
 
       - name: Publish app
-        run: dotnet publish ImageApi/ImageApi.csproj -c Release -r win-x64 --self-contained false -o "${{ github.workspace }}/myapp"
+        run: dotnet publish ImageApi/ImageApi.csproj -c Release -o "${{ github.workspace }}/myapp"
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
