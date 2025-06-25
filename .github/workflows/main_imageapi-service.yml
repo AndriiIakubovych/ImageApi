@@ -11,6 +11,8 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read
+    env:
+      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
 
     steps:
       - uses: actions/checkout@v4
@@ -35,11 +37,13 @@ jobs:
       - name: Run tests
         run: dotnet test ImageApi.Tests/ImageApi.Tests.csproj --configuration Release --no-build --verbosity normal
 
-      - name: Run EF migrations
-        run: dotnet ef database update --project ImageApi/ImageApi.csproj --startup-project ImageApi/ImageApi.csproj
-
       - name: Publish app
         run: dotnet publish ImageApi/ImageApi.csproj -c Release -o "${{ github.workspace }}/myapp"
+
+      - name: Run EF migrations
+        run: dotnet ef database update --project ImageApi/ImageApi.csproj --startup-project ImageApi/ImageApi.csproj
+        env:
+          DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
