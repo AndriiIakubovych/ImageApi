@@ -62,9 +62,13 @@ All secrets (connection strings, Azure credentials) are stored securely in GitHu
 
 The project is successfully deployed and running on Azure Web App.
 Live URL:
+```bash
 https://imageapi-service-b6grdca0fkfbeaeg.westeurope-01.azurewebsites.net/
+```
 Interactive GraphQL Playground available at:
+```bash
 https://imageapi-service-b6grdca0fkfbeaeg.westeurope-01.azurewebsites.net/graphql/
+```
 
 ---
 
@@ -141,12 +145,11 @@ Since file uploads require multipart form-data, you can test image upload via Po
 - URL: `https://localhost:7125/graphql`
 - Body → form-data:
 
-| Key         | Value                                                                |
-|-------------|----------------------------------------------------------------------|
-| operations  | `{"query": "mutation ($file: Upload!) { uploadImage(file: $file) }",`|
-|             | `"variables": {"file": null}}`                                       |
-| map         | `{"0": ["variables.file"]}`                                          |
-| 0           | File — (select your image file, e.g., `test.jpg`)                    |
+| Key         | Value                                                                                              |
+|-------------|----------------------------------------------------------------------------------------------------|
+| operations  | `{"query": "mutation ($file: Upload!) { uploadImage(file: $file) }", "variables": {"file": null}}` |
+| map         | `{"0": ["variables.file"]}`                                                                        |
+| 0           | File — (select your image file, e.g., `test.jpg`)                                                  |
 
 ### Query Image (Nitro UI)
 
@@ -237,4 +240,4 @@ No manual deployment steps are required.
 
 ## Author
 
-Test task completed by Andrii Iakubovych
+Test task completed by: **Andrii Iakubovych**
