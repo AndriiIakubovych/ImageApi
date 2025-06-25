@@ -18,17 +18,11 @@ namespace ImageApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 			
-			var blobConnectionString = builder.Configuration.GetSection("AzureBlobStorage")["StorageKey"];
-			if (string.IsNullOrEmpty(blobConnectionString))
-			{
-				throw new InvalidOperationException("Azure Blob Storage connection string is not configured.");
-			}
+			var blobConnectionString = builder.Configuration.GetSection("AzureBlobStorage")["StorageKey"]
+				?? throw new InvalidOperationException("Azure Blob Storage connection string is not configured.");
 
-			var dbConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-			if (string.IsNullOrEmpty(dbConnectionString))
-			{
-				throw new InvalidOperationException("Database connection string is not configured.");
-			}
+			var dbConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+				?? throw new InvalidOperationException("Database connection string is not configured.");
 
 			builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConnectionString));
 			builder.Services.AddSingleton<IBlobStorageService>(new BlobStorageService(blobConnectionString));
