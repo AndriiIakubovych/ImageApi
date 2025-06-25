@@ -107,3 +107,4 @@ The solution can be easily deployed via Docker or hosted on Azure/AWS with minor
 ## Author
 
 Test task completed by Andrii Iakubovych
+This string is added to test CI/CD
