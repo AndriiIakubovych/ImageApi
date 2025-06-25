@@ -7,16 +7,10 @@ namespace ImageApi.Infrastructure.Persistence
 	{
 		public AppDbContext CreateDbContext(string[] args)
 		{
-			var configuration = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", optional: true)
-				.AddEnvironmentVariables()
-				.Build();
-
-			var connectionString = configuration.GetConnectionString("DefaultConnection");
+			var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 			if (string.IsNullOrEmpty(connectionString))
 			{
-				throw new InvalidOperationException("DefaultConnection string is not configured.");
+				throw new InvalidOperationException("DB_CONNECTION_STRING is not configured.");
 			}
 
 			var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
