@@ -17,7 +17,7 @@ namespace ImageApi
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
-			var blobConnectionString = builder.Configuration.GetSection("AzureBlobStorage")["ConnectionString"]
+			var blobConnectionString = builder.Configuration.GetSection("AzureBlobStorage")["StorageConnection"]
 				?? throw new InvalidOperationException("Azure Blob Storage connection string is not configured.");
 
 			builder.Services.AddDbContext<AppDbContext>(options =>
