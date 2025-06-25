@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - imageapi-service
+name: Build, Test and Deploy ASP.Net Core app to Azure Web App - imageapi-service
 
 on:
   push:
@@ -15,40 +15,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.0'
 
       - name: Restore dependencies
-        run: dotnet restore ImageApi/ImageApi.csproj
+        run: dotnet restore
 
-      - name: Build
-        run: dotnet build ImageApi/ImageApi.csproj --configuration Release --no-restore
+      - name: Build solution
+        run: dotnet build --configuration Release
 
-      - name: Publish
-        run: dotnet publish ImageApi/ImageApi.csproj --configuration Release --output publish_output --no-restore
+      - name: Run tests
+        run: dotnet test ImageApi.Tests/ImageApi.Tests.csproj --configuration Release --no-build --verbosity normal
 
-      - name: Upload artifact
+      - name: Publish app
+        run: dotnet publish ImageApi/ImageApi.csproj -c Release -r win-x64 --self-contained false -o "${{ github.workspace }}/myapp"
+
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: published-app
-          path: publish_output
+          name: .net-app
+          path: ${{ github.workspace }}/myapp
 
   deploy:
     runs-on: windows-latest
     needs: build
-
     permissions:
       id-token: write
       contents: read
 
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: published-app
-          path: publish_output
+          name: .net-app
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -58,7 +59,9 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6F3C8F534AA04DB8BF0C4AA15C7A92B0 }}
 
       - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'imageapi-service'
-          package: publish_output
+          slot-name: 'Production'
+          package: .
