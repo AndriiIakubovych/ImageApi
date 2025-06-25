@@ -6,9 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  AZURE_BLOB_CONNECTION_STRING: ${{ secrets.AZURE_BLOB_CONNECTION_STRING }}
-
 jobs:
   build:
     runs-on: windows-latest
@@ -27,7 +24,7 @@ jobs:
         run: dotnet tool install --global dotnet-ef
 
       - name: Add dotnet tools to PATH
-        run: echo "${{ runner.tool_cache }}/.dotnet/tools" >> $GITHUB_PATH
+        run: echo "$env:USERPROFILE\.dotnet\tools" >> $GITHUB_PATH
 
       - name: Restore dependencies
         run: dotnet restore
@@ -42,9 +39,9 @@ jobs:
         run: dotnet publish ImageApi/ImageApi.csproj -c Release -r win-x64 --self-contained false -o "${{ github.workspace }}/myapp"
 
       - name: Run EF migrations
-        run: |
-          $env:DB_CONNECTION_STRING="${{ secrets.DB_CONNECTION_STRING }}"
-          dotnet ef database update --project ImageApi/ImageApi.csproj
+        run: dotnet ef database update --project ImageApi/ImageApi.csproj
+        env:
+          DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
