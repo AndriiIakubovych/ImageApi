@@ -18,7 +18,7 @@ namespace ImageApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 			
-			/*var blobConnectionString = builder.Configuration.GetSection("AzureBlobStorage")["StorageKey"];
+			var blobConnectionString = builder.Configuration.GetSection("AzureBlobStorage")["StorageKey"];
 			if (string.IsNullOrEmpty(blobConnectionString))
 			{
 				throw new InvalidOperationException("Azure Blob Storage connection string is not configured.");
@@ -45,19 +45,19 @@ namespace ImageApi
 				.AddQueryType<RootQuery>()
 				.AddMutationType<ImageMutation>()
 				.AddType<UploadType>()
-				.AddErrorFilter<GraphQLErrorFilter>();*/
+				.AddErrorFilter<GraphQLErrorFilter>();
 
 			var app = builder.Build();
 
-			/*using (var scope = app.Services.CreateScope())
+			using (var scope = app.Services.CreateScope())
 			{
 				var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 				db.Database.Migrate();
 			}
 
-			app.UseMiddleware<ExceptionHandlingMiddleware>();*/
+			app.UseMiddleware<ExceptionHandlingMiddleware>();
 			app.UseHttpsRedirection();
-			//app.MapGraphQL();
+			app.MapGraphQL();
 			app.MapGet("/", () => "Image API started!");
 
 			app.Run();
