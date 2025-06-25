@@ -1,4 +1,4 @@
-name: Build, Test and Deploy ASP.Net Core app to Azure Web App - imageapi-service
+name: Build, Test, Migrate and Deploy ASP.Net Core app to Azure Web App - imageapi-service
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
         run: dotnet test ImageApi.Tests/ImageApi.Tests.csproj --configuration Release --no-build --verbosity normal
 
       - name: Publish app
-        run: dotnet publish ImageApi/ImageApi.csproj -c Release -o "${{ github.workspace }}/myapp"
+        run: dotnet publish ImageApi/ImageApi.csproj -c Release -r win-x64 --self-contained false -o "${{ github.workspace }}/myapp"
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
@@ -38,9 +38,29 @@ jobs:
           name: .net-app
           path: ${{ github.workspace }}/myapp
 
-  deploy:
+  migrate:
     runs-on: windows-latest
     needs: build
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Apply EF Core migrations
+        run: dotnet ef database update --project ImageApi/ImageApi.csproj
+
+  deploy:
+    runs-on: windows-latest
+    needs: migrate
     permissions:
       id-token: write
       contents: read
