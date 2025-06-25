@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 env:
-  DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
   AZURE_BLOB_CONNECTION_STRING: ${{ secrets.AZURE_BLOB_CONNECTION_STRING }}
 
 jobs:
@@ -43,7 +42,9 @@ jobs:
         run: dotnet publish ImageApi/ImageApi.csproj -c Release -r win-x64 --self-contained false -o "${{ github.workspace }}/myapp"
 
       - name: Run EF migrations
-        run: dotnet ef database update --project ImageApi/ImageApi.csproj
+        run: |
+          $env:DB_CONNECTION_STRING="${{ secrets.DB_CONNECTION_STRING }}"
+          dotnet ef database update --project ImageApi/ImageApi.csproj
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
