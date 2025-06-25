@@ -1,4 +1,4 @@
-name: Build, Test and Deploy ASP.Net Core app to Azure Web App - imageapi-service
+name: Build, Test, Migrate and Deploy ASP.Net Core app to Azure Web App - imageapi-service
 
 on:
   push:
@@ -20,6 +20,12 @@ jobs:
         with:
           dotnet-version: '8.0'
 
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add dotnet tools to PATH
+        run: echo "$env:USERPROFILE\.dotnet\tools" >> $GITHUB_PATH
+
       - name: Restore dependencies
         run: dotnet restore
 
@@ -28,6 +34,9 @@ jobs:
 
       - name: Run tests
         run: dotnet test ImageApi.Tests/ImageApi.Tests.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Run EF migrations
+        run: dotnet ef database update --project ImageApi/ImageApi.csproj --startup-project ImageApi/ImageApi.csproj
 
       - name: Publish app
         run: dotnet publish ImageApi/ImageApi.csproj -c Release -o "${{ github.workspace }}/myapp"
