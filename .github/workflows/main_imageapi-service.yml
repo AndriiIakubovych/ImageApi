@@ -1,4 +1,4 @@
-name: Build, Test, Migrate and Deploy ASP.Net Core app to Azure Web App - imageapi-service
+name: Build, Test and Deploy ASP.Net Core app to Azure Web App - imageapi-service
 
 on:
   push:
@@ -11,9 +11,6 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read
-    env:
-      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
-      AZURE_BLOB_CONNECTION_STRING: ${{ secrets.AZURE_BLOB_CONNECTION_STRING }}
 
     steps:
       - uses: actions/checkout@v4
@@ -22,12 +19,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0'
-
-      - name: Install dotnet-ef tool
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Add dotnet tools to PATH
-        run: echo "$env:USERPROFILE\.dotnet\tools" >> $GITHUB_PATH
 
       - name: Restore dependencies
         run: dotnet restore
@@ -39,12 +30,7 @@ jobs:
         run: dotnet test ImageApi.Tests/ImageApi.Tests.csproj --configuration Release --no-build --verbosity normal
 
       - name: Publish app
-        run: dotnet publish ImageApi/ImageApi.csproj -c Release -r win-x64 --self-contained false -o "${{ github.workspace }}/myapp"
-
-      - name: Run EF migrations
-        run: dotnet ef database update --project ImageApi/ImageApi.csproj --startup-project ImageApi/ImageApi.csproj
-        env:
-          DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+        run: dotnet publish ImageApi/ImageApi.csproj -c Release -o "${{ github.workspace }}/myapp"
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
