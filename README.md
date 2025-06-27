@@ -83,7 +83,7 @@ https://imageapi-service-b6grdca0fkfbeaeg.westeurope-01.azurewebsites.net/graphq
 
 ### Configuration
 
-Configure database connection string in `appsettings.json`:
+Configure database connection string and azure blob storage connection in `appsettings.json`:
 
 ```json
 "ConnectionStrings": {

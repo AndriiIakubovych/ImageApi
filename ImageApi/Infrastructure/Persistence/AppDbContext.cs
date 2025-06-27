@@ -13,6 +13,11 @@ namespace ImageApi.Infrastructure.Persistence
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<Image>()
+				.HasMany(i => i.Variations)
+				.WithOne(iv => iv.Image)
+				.HasForeignKey(iv => iv.ImageId);
+
 			modelBuilder.Entity<ImageVariation>()
 				.HasIndex(iv => new { iv.ImageId, iv.Height })
 				.IsUnique();

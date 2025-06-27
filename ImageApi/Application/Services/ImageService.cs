@@ -134,7 +134,7 @@ namespace ImageApi.Application.Services
 			var variationFileName = $"{imageId}_{height}.jpg";
 			await _blobStorageService.UploadFileAsync(variationFileName, outputStream);
 
-			var newVariation = new ImageVariation
+			var variation = new ImageVariation
 			{
 				Id = Guid.NewGuid(),
 				ImageId = imageId,
@@ -142,7 +142,7 @@ namespace ImageApi.Application.Services
 				FilePath = variationFileName
 			};
 
-			_dbContext.ImageVariations.Add(newVariation);
+			_dbContext.ImageVariations.Add(variation);
 			await _dbContext.SaveChangesAsync();
 
 			return _blobStorageService.GetFileUrl(variationFileName);
