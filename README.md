@@ -155,6 +155,19 @@ Since file uploads require multipart form-data, you can test image upload via Po
 
 You can execute the following GraphQL queries via Nitro UI (available at /graphql endpoint):
 
+**Get full image**
+```graphql
+query {
+  image {
+    image(id: "<GUID>") {
+      id
+      url
+      createdAt
+    }
+  }
+}
+```
+
 **Get full image with variations**
 ```graphql
 query {
