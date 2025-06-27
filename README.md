@@ -96,8 +96,8 @@ Configure database connection string and azure blob storage connection in `appse
 }
 ```
 
-Or use `dotnet user-secrets`.
-Add DB_CONNECTION_STRING local environment with DB connection string:
+Or use `dotnet user-secrets`: AZURE_BLOB_CONNECTION_STRING, DB_CONNECTION_STRING  
+Add DB_CONNECTION_STRING local environment variable with DB connection string:
 ```bash
 set DB_CONNECTION_STRING=Host=localhost;Port=5432;Database=ImageApiDb;Username=your_user;Password=your_password
 ```
