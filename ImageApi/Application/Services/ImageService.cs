@@ -103,7 +103,9 @@ namespace ImageApi.Application.Services
 
 		public async Task<string> GetImageVariationUrlAsync(Guid imageId, int height)
 		{
-			var image = await _dbContext.Images.FindAsync(imageId)
+			var image = await _dbContext.Images
+				.Include(i => i.Variations)
+				.FirstOrDefaultAsync(i => i.Id == imageId)
 				?? throw new ImageNotFoundException(imageId);
 
 			if (image.Variations.Any(v => v.Height == height))
